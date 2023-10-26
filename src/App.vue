@@ -1,85 +1,105 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue';
+import { RouterLink, RouterView } from 'vue-router';
+import HelloWorld from './components/HelloWorld.vue';
+
+// const likes = ref(0)
+// const dislikes = ref(5)
+// function addLike() {
+//   likes.value++
+// }
+
+const posts = ref([
+  { id: 1, title: 'Javascript', body: 'Описание поста' },
+  { id: 2, title: 'Javascript 2', body: 'Описание поста 2' },
+  { id: 3, title: 'Javascript 3', body: 'Описание поста 3' }
+]);
+
+const title = ref<string>('');
+const body = ref<string>('');
+
+const inputTitle = (event: Event) => {
+  title.value = (event.target as HTMLInputElement).value;
+};
+
+const createPost = () => {
+  const newPost = {
+    id: Date.now(),
+    title: title.value,
+    body: body.value
+  };
+
+  posts.value.push(newPost);
+  title.value = '';
+  body.value = '';
+};
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  <div class="app">
+    <form @submit.prevent class="form">
+      <h4>Создание поста</h4>
+      <input
+        v-bind:value="title"
+        @input="inputTitle"
+        class="input"
+        type="text"
+        placeholder="Название"
+      />
+      <!-- Сокращенная запись -->
+      <input
+        :value="body"
+        @input="body = ($event.target as HTMLInputElement).value"
+        class="input"
+        type="text"
+        placeholder="Описание"
+      />
+      <button class="btn" @click="createPost">Создать</button>
+    </form>
+    <div class="post" v-for="post in posts" v-bind:key="post.id">
+      <div><strong>Название:</strong>{{ post.title }}</div>
+      <div><strong>Описание:</strong>{{ post.body }}</div>
     </div>
-  </header>
-
-  <RouterView />
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<style>
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.app {
+  padding: 20px;
 }
 
-nav {
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
   width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  border: 1px solid teal;
+  padding: 10px 15px;
+  margin-top: 15px;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+.btn {
+  margin-top: 15px;
+  align-self: flex-end;
+  padding: 10px 15px;
+  background: none;
+  color: teal;
+  border: 1px solid teal;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.post {
+  padding: 15px;
+  border: 2px solid teal;
+  margin-top: 15px;
 }
 </style>
