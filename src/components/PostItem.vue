@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Post } from '@/types';
+import MyButton from '@/components/ui/MyButton.vue';
 
 interface Props {
   post: Post;
@@ -10,8 +11,13 @@ defineProps<Props>();
 
 <template>
   <div class="post">
-    <div><strong>Название:</strong>{{ post.title }}</div>
-    <div><strong>Описание:</strong>{{ post.body }}</div>
+    <div>
+      <div><strong>Название:</strong>{{ post.title }}</div>
+      <div><strong>Описание:</strong>{{ post.body }}</div>
+    </div>
+    <div class="post__btns">
+      <MyButton>Удалить</MyButton>
+    </div>
   </div>
 </template>
 
@@ -20,5 +26,8 @@ defineProps<Props>();
   padding: 15px;
   border: 2px solid teal;
   margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>
