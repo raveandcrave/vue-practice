@@ -1,19 +1,43 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
 import PostForm from '@/components/PostForm.vue';
 import PostList from '@/components/PostList.vue';
 import MyDialog from './components/ui/MyDialog.vue';
-import type { Post } from './types';
-import MyButton from './components/ui/MyButton.vue';
+import MyButton from '@/components/ui/MyButton.vue';
+import MySelect from '@/components/ui/MySelect.vue';
+import type { Post } from '@/types';
 
-const posts = ref<Post[]>([
-  { id: 1, title: 'Javascript', body: 'Описание поста' },
-  { id: 2, title: 'Javascript 2', body: 'Описание поста 2' },
-  { id: 3, title: 'Javascript 3', body: 'Описание поста 3' }
+const posts = ref<Post[]>([]);
+const dialogVisible = ref(false);
+const isPostLoading = ref(false);
+const selectedSort = ref('');
+const sortOptions = ref([
+  { value: 'title', name: 'По названию' },
+  { value: 'body', name: 'По содержанию' }
 ]);
 
-const dialogVisible = ref(false);
+onMounted(() => {
+  fetchPosts();
+});
+
+const fetchPosts = async () => {
+  try {
+    isPostLoading.value = true;
+    setTimeout(async () => {
+      const response = await axios.get<Post[]>(
+        'https://jsonplaceholder.typicode.com/posts?_limit=10'
+      );
+      posts.value = response.data;
+      isPostLoading.value = false;
+    }, 1000);
+  } catch (error) {
+    alert('Ошибка');
+  } finally {
+    // isPostLoading.value = false;
+  }
+};
 
 const createPost = (post: Post) => {
   posts.value.push(post);
@@ -32,11 +56,15 @@ const showDialog = () => {
 <template>
   <div class="app">
     <h1>Страница с постами</h1>
-    <MyButton @click="showDialog" style="margin: 15px 0">Создать пост</MyButton>
+    <div class="app__btns">
+      <MyButton @click="showDialog">Создать пост</MyButton>
+      <MySelect v-model="selectedSort" :options="sortOptions" />
+    </div>
     <MyDialog v-model:show="dialogVisible">
       <PostForm @create="createPost" />
     </MyDialog>
-    <PostList @remove="removePost" :posts="posts" />
+    <PostList v-if="!isPostLoading" @remove="removePost" :posts="posts" />
+    <div v-else>Идет загрузка...</div>
   </div>
 </template>
 
@@ -51,5 +79,11 @@ const showDialog = () => {
 
 .app {
   padding: 20px;
+}
+
+.app__btns {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
 }
 </style>
