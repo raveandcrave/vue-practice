@@ -43,6 +43,12 @@ const sortedPosts = computed(() => {
   }
 });
 
+const sortedAndSearchedPosts = computed(() => {
+  return sortedPosts.value.filter((post) =>
+    post.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+
 const fetchPosts = async () => {
   try {
     isPostLoading.value = true;
@@ -77,6 +83,7 @@ const showDialog = () => {
 <template>
   <div class="app">
     <h1>Страница с постами</h1>
+    <MyInput v-model="searchQuery" placeholder="Поиск..." />
     <div class="app__btns">
       <MyButton @click="showDialog">Создать пост</MyButton>
       <MySelect v-model="selectedSort" :options="sortOptions" />
@@ -84,7 +91,7 @@ const showDialog = () => {
     <MyDialog v-model:show="dialogVisible">
       <PostForm @create="createPost" />
     </MyDialog>
-    <PostList v-if="!isPostLoading" @remove="removePost" :posts="sortedPosts" />
+    <PostList v-if="!isPostLoading" @remove="removePost" :posts="sortedAndSearchedPosts" />
     <div v-else>Идет загрузка...</div>
   </div>
 </template>
