@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
 
 import PostForm from '@/components/PostForm.vue';
@@ -7,18 +7,28 @@ import PostList from '@/components/PostList.vue';
 import MyDialog from './components/ui/MyDialog.vue';
 import MyButton from '@/components/ui/MyButton.vue';
 import MySelect from '@/components/ui/MySelect.vue';
+import MyInput from '@/components/ui/MyInput.vue';
+import MyPagination from '@/components/ui/MyPagination.vue';
 import type { Post, SortOption, SortOptionValue } from '@/types';
 
 const posts = ref<Post[]>([]);
 const dialogVisible = ref(false);
 const isPostLoading = ref(false);
 const selectedSort = ref<SortOptionValue>('');
+const searchQuery = ref<string>('');
+const page = ref<number>(1);
+const totalPages = ref<number>(0);
+const limit = 10;
 const sortOptions: SortOption[] = [
   { value: 'title', name: 'По названию' },
   { value: 'body', name: 'По содержанию' }
 ];
 
 onMounted(() => {
+  fetchPosts();
+});
+
+watch(page, () => {
   fetchPosts();
 });
 
@@ -53,9 +63,14 @@ const fetchPosts = async () => {
   try {
     isPostLoading.value = true;
     setTimeout(async () => {
-      const response = await axios.get<Post[]>(
-        'https://jsonplaceholder.typicode.com/posts?_limit=10'
-      );
+      const response = await axios.get<Post[]>('https://jsonplaceholder.typicode.com/posts', {
+        params: {
+          _page: page.value,
+          _limit: limit
+        }
+      });
+
+      totalPages.value = Math.ceil(response.headers['x-total-count'] / limit);
       posts.value = response.data;
       isPostLoading.value = false;
     }, 1000);
@@ -93,6 +108,7 @@ const showDialog = () => {
     </MyDialog>
     <PostList v-if="!isPostLoading" @remove="removePost" :posts="sortedAndSearchedPosts" />
     <div v-else>Идет загрузка...</div>
+    <MyPagination :total-pages="totalPages" v-model:current-page="page" />
   </div>
 </template>
 
