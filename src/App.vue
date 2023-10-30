@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 
 import PostForm from '@/components/PostForm.vue';
@@ -7,19 +7,40 @@ import PostList from '@/components/PostList.vue';
 import MyDialog from './components/ui/MyDialog.vue';
 import MyButton from '@/components/ui/MyButton.vue';
 import MySelect from '@/components/ui/MySelect.vue';
-import type { Post } from '@/types';
+import type { Post, SortOption, SortOptionValue } from '@/types';
 
 const posts = ref<Post[]>([]);
 const dialogVisible = ref(false);
 const isPostLoading = ref(false);
-const selectedSort = ref('');
-const sortOptions = ref([
+const selectedSort = ref<SortOptionValue>('');
+const sortOptions: SortOption[] = [
   { value: 'title', name: 'По названию' },
   { value: 'body', name: 'По содержанию' }
-]);
+];
 
 onMounted(() => {
   fetchPosts();
+});
+
+//Вариант сортировки с watcher и мутацией исходного массива
+// watch(selectedSort, (newSelectedSort) => {
+//   if (newSelectedSort !== '') {
+//     posts.value.sort((post1, post2) => {
+//       return post1[newSelectedSort].localeCompare(post2[newSelectedSort]);
+//     });
+//   }
+// });
+
+//Вариант сортировки с computed и созданием нового массива
+const sortedPosts = computed(() => {
+  if (selectedSort.value === '') {
+    return [...posts.value];
+  } else {
+    return [...posts.value].sort((post1, post2) =>
+      //@ts-ignore
+      post1[selectedSort.value].localeCompare(post2[selectedSort.value])
+    );
+  }
 });
 
 const fetchPosts = async () => {
@@ -63,7 +84,7 @@ const showDialog = () => {
     <MyDialog v-model:show="dialogVisible">
       <PostForm @create="createPost" />
     </MyDialog>
-    <PostList v-if="!isPostLoading" @remove="removePost" :posts="posts" />
+    <PostList v-if="!isPostLoading" @remove="removePost" :posts="sortedPosts" />
     <div v-else>Идет загрузка...</div>
   </div>
 </template>

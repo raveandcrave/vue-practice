@@ -1,8 +1,5 @@
 <script setup lang="ts">
-interface Option {
-  value: string;
-  name: string;
-}
+import type { Option } from '@/types';
 
 interface Props {
   modelValue: string;
