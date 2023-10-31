@@ -1,3 +1,7 @@
+import type { Directive } from 'vue';
+
+export type DirectiveWithName<T, V> = Directive<T, V> & { name: string };
+
 export interface Post {
   title: string;
   body: string;

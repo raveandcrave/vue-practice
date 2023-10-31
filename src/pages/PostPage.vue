@@ -18,7 +18,7 @@ const selectedSort = ref<SortOptionValue>('');
 const searchQuery = ref<string>('');
 const page = ref<number>(1);
 const totalPages = ref<number>(0);
-const refObserver = ref<HTMLInputElement | null>(null);
+// const refObserver = ref<HTMLInputElement | null>(null);
 const limit = 10;
 const sortOptions: SortOption[] = [
   { value: 'title', name: 'По названию' },
@@ -28,22 +28,22 @@ const sortOptions: SortOption[] = [
 onMounted(() => {
   fetchPosts();
 
-  const options = {
-    rootMargin: '0px',
-    threshold: 1.0
-  };
+  // const options = {
+  //   rootMargin: '0px',
+  //   threshold: 1.0
+  // };
 
-  const callback = (entries: IntersectionObserverEntry[]) => {
-    if (entries[0].isIntersecting && page.value < totalPages.value) {
-      loadMorePosts();
-    }
-  };
+  // const callback = (entries: IntersectionObserverEntry[]) => {
+  //   if (entries[0].isIntersecting && page.value < totalPages.value) {
+  //     loadMorePosts();
+  //   }
+  // };
 
-  const observer = new IntersectionObserver(callback, options);
+  // const observer = new IntersectionObserver(callback, options);
 
-  if (refObserver.value) {
-    observer.observe(refObserver.value);
-  }
+  // if (refObserver.value) {
+  //   observer.observe(refObserver.value);
+  // }
 });
 
 // watch(page, () => {
@@ -140,7 +140,7 @@ const showDialog = () => {
     </MyDialog>
     <PostList v-if="!isPostLoading" @remove="removePost" :posts="sortedAndSearchedPosts" />
     <div v-else>Идет загрузка...</div>
-    <div ref="refObserver" class="observer"></div>
+    <div v-intersection="loadMorePosts" class="observer"></div>
     <!-- <MyPagination :total-pages="totalPages" v-model:current-page="page" /> -->
   </div>
 </template>

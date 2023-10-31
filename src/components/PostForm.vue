@@ -30,7 +30,7 @@ const createPost = () => {
 <template>
   <form @submit.prevent class="form">
     <h4>Создание поста</h4>
-    <MyInput v-model="post.title" placeholder="Название" />
+    <MyInput v-focus v-model="post.title" placeholder="Название" />
     <MyInput v-model="post.body" placeholder="Описание" />
     <MyButton @click="createPost" style="align-self: flex-end; margin-top: 15px">Создать</MyButton>
   </form>
