@@ -4,6 +4,7 @@ import MainPage from '@/pages/MainPage.vue';
 import PostPage from '@/pages/PostPage.vue';
 import AboutPage from '@/pages/AboutPage.vue';
 import PostIdPage from '@/pages/PostIdPage.vue';
+import PostPageHooks from '@/pages/PostPageHooks.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -21,6 +22,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/about',
     component: AboutPage
+  },
+  {
+    path: '/hook',
+    component: PostPageHooks
   }
 ];
 

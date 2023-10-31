@@ -7,6 +7,7 @@ import MyButton from '@/components/ui/MyButton.vue';
     <div>Vue 3</div>
     <div class="navbar__btns">
       <MyButton @click="$router.push('/posts')">Посты</MyButton>
+      <MyButton @click="$router.push('/hook')">Hooks</MyButton>
       <MyButton @click="$router.push('/about')">О сайте</MyButton>
     </div>
   </nav>
