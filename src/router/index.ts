@@ -5,6 +5,7 @@ import PostPage from '@/pages/PostPage.vue';
 import AboutPage from '@/pages/AboutPage.vue';
 import PostIdPage from '@/pages/PostIdPage.vue';
 import PostPageHooks from '@/pages/PostPageHooks.vue';
+import PostPageStore from '@/pages/PostPageStore.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -26,6 +27,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/hook',
     component: PostPageHooks
+  },
+  {
+    path: '/store',
+    component: PostPageStore
   }
 ];
 
